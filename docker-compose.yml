@@ -16,8 +16,3 @@ services:
       HTTP_PORT: "${HTTP_PORT:-4080}"
     network_mode: host
     restart: always
-
-networks:
-  default:
-    external:
-      name: host
