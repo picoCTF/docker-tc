@@ -55,6 +55,10 @@ while read DOCKER_EVENT; do
             REORDERING=$(docker_container_labels_get "$BASE_LABEL.reorder")
             tc_init
             qdisc_del "$NETWORK_INTERFACE_NAME" &>/dev/null || true
+            if [ ! -z "$LIMIT" ]; then
+                log "Set bandwidth-limit=$LIMIT on $NETWORK_INTERFACE_NAME"
+                qdisc_tbf "$NETWORK_INTERFACE_NAME" rate "$LIMIT"
+            fi
             OPTIONS_LOG=
             NETM_OPTIONS=
             netm_add_rule() {
@@ -71,10 +75,6 @@ while read DOCKER_EVENT; do
             OPTIONS_LOG=$(echo "$OPTIONS_LOG" | sed 's/[, ]*$//')
             log "Set ${OPTIONS_LOG} on $NETWORK_INTERFACE_NAME"
             qdisc_netm "$NETWORK_INTERFACE_NAME" $NETM_OPTIONS
-            if [ ! -z "$LIMIT" ]; then
-                log "Set bandwidth-limit=$LIMIT on $NETWORK_INTERFACE_NAME"
-                qdisc_tbf "$NETWORK_INTERFACE_NAME" rate "$LIMIT"
-            fi
             lock "$CONTAINER_ID"
             log "Controlling traffic of the container $(docker_container_get_name "$CONTAINER_ID") on $NETWORK_INTERFACE_NAME"
         done < <(echo -e "$NETWORK_INTERFACE_NAMES")
