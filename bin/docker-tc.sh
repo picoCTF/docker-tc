@@ -73,8 +73,10 @@ while read DOCKER_EVENT; do
             netm_add_rule "duplicate" "$DUPLICATION" "duplicate"
             netm_add_rule "reorder" "$REORDERING" "reorder"
             OPTIONS_LOG=$(echo "$OPTIONS_LOG" | sed 's/[, ]*$//')
-            log "Set ${OPTIONS_LOG} on $NETWORK_INTERFACE_NAME"
-            qdisc_netm "$NETWORK_INTERFACE_NAME" $NETM_OPTIONS
+            if [ ! -z "$NETM_OPTIONS"]; then
+                log "Set ${OPTIONS_LOG} on $NETWORK_INTERFACE_NAME"
+                qdisc_netm "$NETWORK_INTERFACE_NAME" $NETM_OPTIONS
+            fi
             lock "$CONTAINER_ID"
             log "Controlling traffic of the container $(docker_container_get_name "$CONTAINER_ID") on $NETWORK_INTERFACE_NAME"
         done < <(echo -e "$NETWORK_INTERFACE_NAMES")
