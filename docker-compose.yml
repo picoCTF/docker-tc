@@ -2,7 +2,9 @@ version: '3.7'
 
 services:
   tc:
-    image: "${DOCKER_IMAGE_TERMINAL:-lukaszlach/docker-tc}"
+    image: "picoctf/docker-tc"
+    build:
+      context: .
     container_name: docker-tc
     cap_add:
       - NET_ADMIN
