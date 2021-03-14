@@ -1,4 +1,4 @@
-FROM golang:stretch AS hapttic
+FROM golang:1.14-stretch AS hapttic
 
 RUN git clone https://github.com/jsoendermann/hapttic.git && \
     cd hapttic/ && \
